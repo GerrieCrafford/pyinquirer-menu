@@ -134,38 +134,6 @@ if __name__ == '__main__':
     def load_handler(filepath, length):
         print('Loadhandler called with path: {} and length: {}'.format(filepath,
                                                                        length))
-    # Long method
-    m1 = Menu('Root')
-
-    m2 = Menu('RL', parent=m1)
-    mi1 = MenuItem('Do RL',
-                   lambda: print('Do RL called'),
-                   m2)
-    mi2 = MenuItem('Something else',
-                   lambda: print('Something else called'),
-                   m2)
-    m2.add_children([mi1, mi2])
-
-    m3 = Menu('IRL', parent=m1)
-    mi3 = MenuItem('Do IRL',
-                   lambda: print('Do IRL called'),
-                   m3)
-    m4 = Menu('Reward', parent=m2)
-    mi4 = MenuItem('Load',
-                   load_handler,
-                   m4,
-                   ['Enter file path.',
-                    'Enter length.']
-                  )
-    mi5 = MenuItem('Save',
-                   lambda: print('Save called'),
-                   m4)
-    m4.add_children([mi4, mi5])
-
-    m3.add_children([mi3, m4])
-
-    m1.add_children([m2, m3])
-
     # Compact method
     root_menu = Menu('Root')
     root_menu.add_children([
