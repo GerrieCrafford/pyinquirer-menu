@@ -156,7 +156,7 @@ if __name__ == '__main__':
 
     m1.add_children([m2, m3])
 
-    # Compcat method
+    # Compact method
     root_menu = Menu('Root')
     root_menu.add_children([
         Menu('RL',
