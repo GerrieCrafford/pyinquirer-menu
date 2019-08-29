@@ -62,12 +62,24 @@ class MenuItem():
             # Required values
             values = []
             for i in asked_indices:
-                values.append(answers[i])
+                val = answers[i]
+
+                # Convert value if conversion function provided
+                if 'conv' in self.additional_questions[i]:
+                    val = self.additional_questions[i]['conv'](val)
+
+                values.append(val)
 
             # Optional values
             opt = {}
             for name, i in optional_questions:
-                opt[name] = answers[i]
+                val = answers[i]
+
+                # Convert value if conversion function provided
+                if 'conv' in self.additional_questions[i]:
+                    val = self.additional_questions[i]['conv'](val)
+
+                opt[name] = val
 
             self.handler(*values, **opt)
 
@@ -162,9 +174,10 @@ class Menu():
 
 if __name__ == '__main__':
     def load_handler(filepath, length, choices):
-        print('Loadhandler called with path: {} and length: {} and choices: {}'.format(filepath,
-                                                                                       length,
-                                                                                       choices))
+        print('Loadhandler called with path: {} and length: {} type({}) and choices: {}'.format(filepath,
+                                                                                                length,
+                                                                                                type(length),
+                                                                                                choices))
     # Compact method
     root_menu = Menu('Root')
     root_menu.add_children([
@@ -187,17 +200,19 @@ if __name__ == '__main__':
                                    load_handler,
                                    additional_questions=[
                                        {'msg': 'Enter file path'},
-                                       {'msg': 'Enter length.'},
+                                       {'msg': 'Enter length.',
+                                        'conv': int},
                                        {'type': 'checkbox',
                                         'choices': ['reward_per_episode',
                                                     'total_reward']}
                                    ]),
                           MenuItem('Save',
-                                   lambda x, opt_var=None: print('Got: {} {}'.format(x, opt_var)),
+                                   lambda x, opt_var=None: print('Got: {} {} {}'.format(x, opt_var, type(opt_var))),
                                    additional_questions=[
-                                       {'msg': 'Enter file path',
+                                       {'msg': 'Enter a float',
                                         'once': True,
-                                        'name': 'opt_var'},
+                                        'name': 'opt_var',
+                                        'conv': float},
                                        {'type': 'checkbox',
                                         'msg': 'Some message',
                                         'choices': ['one', 'two', 'three']}
