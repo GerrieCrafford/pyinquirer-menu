@@ -173,54 +173,50 @@ class Menu():
             pass
 
 if __name__ == '__main__':
-    def load_handler(filepath, length, choices):
-        print('Loadhandler called with path: {} and length: {} type({}) and choices: {}'.format(filepath,
-                                                                                                length,
-                                                                                                type(length),
-                                                                                                choices))
     # Compact method
+    def handler(filepath, number, choices, opt_var=None):
+        print('')
+        print('filepath:\t{}\t\ttype:\t\t{}'.format(filepath, type(filepath)))
+        print('number:\t\t{}\t\t\ttype:\t\t{}'.format(number, type(number)))
+        print('choices:\t{}\ttype:\t\t{}'.format(choices, type(choices)))
+        print('opt_var:\t{}\t\ttype:\t\t{}'.format(opt_var, type(opt_var)))
+        print('')
+
     root_menu = Menu('Root')
     root_menu.add_children([
-        Menu('RL',
-             children=[
-                 MenuItem('Do RL',
-                          lambda: print('Do RL called')),
-                 MenuItem('Something else',
-                          lambda: print('Something else called'))
-             ]),
+    Menu('Top Level 1',
+         children=[
+             MenuItem('Mid Level 1 Item',
+                      lambda: print('Mid Level 1 Item called')),
+             MenuItem('Mid Level 2 Item',
+                      lambda: print('Mid Level 2 Item called'))
+         ]),
 
-        Menu('IRL',
-             has_back=False,
-             children=[
-                 MenuItem('Do IRL',
-                          lambda: print('Do IRL called')),
-                 Menu('Reward',
-                      children=[
-                          MenuItem('Load',
-                                   load_handler,
-                                   additional_questions=[
-                                       {'msg': 'Enter file path'},
-                                       {'msg': 'Enter length.',
-                                        'conv': int},
-                                       {'type': 'checkbox',
-                                        'choices': ['reward_per_episode',
-                                                    'total_reward']}
-                                   ]),
-                          MenuItem('Save',
-                                   lambda x, opt_var=None: print('Got: {} {} {}'.format(x, opt_var, type(opt_var))),
-                                   additional_questions=[
-                                       {'msg': 'Enter a float',
-                                        'once': True,
-                                        'name': 'opt_var',
-                                        'conv': float},
-                                       {'type': 'checkbox',
-                                        'msg': 'Some message',
-                                        'choices': ['one', 'two', 'three']}
-                                   ])
+    Menu('Top Level 2',
+         has_back=False,
+         children=[
+             MenuItem('Mid Level 3 Item',
+                      lambda: print('Mid Level 3 Item called')),
+             Menu('Mid Level 4 Menu',
+                  children=[
+                      MenuItem('Bottom Level 1 Item',
+                               lambda: print('Bottom Level 1 Item called')),
+                      MenuItem('Additional questions test',
+                               handler,
+                               additional_questions=[
+                                   {'msg': 'Enter file path.'}, # Note missing 'type' that defaults to 'input'
+                                   {'msg': 'Enter a number.',
+                                    'conv': int}, # Converts to integer
+                                   {'type': 'checkbox', # Note missing 'msg'
+                                    'choices': ['choice1', 'choice2']},
+                                   {'msg': 'Enter a value.',
+                                    'once': True,
+                                    'name': 'opt_var'}
+                               ])
 
-                      ])
+                  ])
 
-             ])
+         ])
     ])
 
     Menu.loop(root_menu)
