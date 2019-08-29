@@ -9,37 +9,67 @@ class MenuItem():
 
         self.additional_questions = additional_questions
 
+        if additional_questions is not None:
+            self.additional_question_counts = [0 for i in additional_questions]
+
     def handle_selection(self):
         if self.additional_questions is not None:
+            asked_indices = []
             questions = []
+            optional_questions = []
             for i, q in enumerate(self.additional_questions):
+                # Check if we should ask this question
+                optional_question = False
+                if 'once' in q and q['once']:
+                    optional_question = True
+                    if self.additional_question_counts[i] > 0:
+                        # Don't ask
+                        continue
+
+                # Handle input type (the default type)
+                if 'type' not in q or q['type'] == 'input':
+                    questions.append({
+                        'type': 'input',
+                        'name': i,
+                        'message': q['msg']
+                    })
+
                 # Handle checkbox question
-                if type(q) is list:
-                    choices = []
-                    for choice in q:
-                        choices.append({'name': choice})
+                elif q['type'] == 'checkbox':
+                    choices = [{'name': c} for c in q['choices']]
+
+                    if 'msg' in q:
+                        msg = q['msg']
+                    else:
+                        msg = 'Select option(s)'
 
                     questions.append({
                         'type': 'checkbox',
-                        'message': 'Select option(s).',
+                        'message': msg,
                         'name': i,
                         'choices': choices
                     })
 
-                # Handle input question
+                self.additional_question_counts[i] += 1
+
+                if optional_question:
+                    optional_questions.append((q['name'], i))
                 else:
-                    questions.append({
-                        'type': 'input',
-                        'name': i,
-                        'message': q
-                    })
+                    asked_indices.append(i)
 
             answers = prompt(questions)
+
+            # Required values
             values = []
-            for i in range(len(self.additional_questions)):
+            for i in asked_indices:
                 values.append(answers[i])
 
-            self.handler(*values)
+            # Optional values
+            opt = {}
+            for name, i in optional_questions:
+                opt[name] = answers[i]
+
+            self.handler(*values, **opt)
 
         else:
             self.handler()
@@ -131,9 +161,10 @@ class Menu():
             pass
 
 if __name__ == '__main__':
-    def load_handler(filepath, length):
-        print('Loadhandler called with path: {} and length: {}'.format(filepath,
-                                                                       length))
+    def load_handler(filepath, length, choices):
+        print('Loadhandler called with path: {} and length: {} and choices: {}'.format(filepath,
+                                                                                       length,
+                                                                                       choices))
     # Compact method
     root_menu = Menu('Root')
     root_menu.add_children([
@@ -155,11 +186,22 @@ if __name__ == '__main__':
                           MenuItem('Load',
                                    load_handler,
                                    additional_questions=[
-                                       'Enter file path',
-                                       'Enter length.'
+                                       {'msg': 'Enter file path'},
+                                       {'msg': 'Enter length.'},
+                                       {'type': 'checkbox',
+                                        'choices': ['reward_per_episode',
+                                                    'total_reward']}
                                    ]),
                           MenuItem('Save',
-                                   lambda: print('Save called'))
+                                   lambda x, opt_var=None: print('Got: {} {}'.format(x, opt_var)),
+                                   additional_questions=[
+                                       {'msg': 'Enter file path',
+                                        'once': True,
+                                        'name': 'opt_var'},
+                                       {'type': 'checkbox',
+                                        'msg': 'Some message',
+                                        'choices': ['one', 'two', 'three']}
+                                   ])
 
                       ])
 
