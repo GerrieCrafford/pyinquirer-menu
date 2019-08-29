@@ -1,10 +1,11 @@
 from PyInquirer import prompt
 
 class MenuItem():
-    def __init__(self, text, handler, parent=None, additional_questions=None):
+    def __init__(self, text, handler, parent=None, additional_questions=None, menu_after=None):
         self.text = text
         self.handler = handler
         self.parent = parent
+        self.menu_after = menu_after
 
         self.additional_questions = additional_questions
 
@@ -62,6 +63,13 @@ class Menu():
             child.parent = self
             self.children.append(child)
 
+            # menu_after parent for menu_item
+            if isinstance(child, MenuItem) and child.menu_after:
+                if child.menu_after.has_back:
+                    child.menu_after.parent = child
+                else:
+                    child.menu_after.parent = self
+
     def get_questions(self):
         choices = [x.text for x in self.children]
 
@@ -104,6 +112,8 @@ class Menu():
         elif isinstance(child, MenuItem):
             child.handle_selection()
 
+            if child.menu_after:
+                return child.menu_after
             if not self.has_back:
                 return self.parent
             else:
