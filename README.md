@@ -6,7 +6,7 @@
 * [Menu Item](#menuitem)
 * [Example](#example)
 
-## Overview<a href="#overview">
+## Overview<a name="overview">
 Wrapper for PyInquirer allowing easy creation of multi-level menus.
 
 The wrapper consists of two classes, `Menu` and `MenuItem`. A `Menu` is a list of options that can be selected and a `MenuItem` is a selectable item in a `Menu`. `Menu`'s can also be nested.
@@ -18,7 +18,7 @@ The package has the following dependencies:
 
 * PyInquirer (tested with `1.0.3`)
 
-## Menu<a href="#menu">
+## Menu<a name="menu">
 `Menu`'s contain a list of items that a user can select. The items can either be other `Menu`'s or `MenuItem`'s.
 
 `MenuItem`'s can be linked to a `Menu` through its constructor (the `children` argument), or afterwards using the `add_children` method. The `add_children` method automatically sets each of the children's `parent` attribute.
@@ -47,7 +47,7 @@ Static method that shows the root `Menu` and allows traversal of the `Menu`'s. T
 
 * **`root_menu`** [`Menu`]: The root `Menu` that will be shown first.
 
-## MenuItem<a href="#menuitem">
+## MenuItem<a name="menuitem">
 `Menu`'s are linked to `MenuItem`s by setting the `parent` property of the `MenuItem` (through the constructor or afterwards).
 
 ### Methods
@@ -96,7 +96,7 @@ MenuItem('Test',
 
 The first time the `MenuItem` is selected, three questions will be asked (and the value of the fourth question passed to `opt_var` of the `handler`). On subsequent calls, the fourth question is not asked and no value is given to `opt_var` of the `handler`.
 
-## Example<a href="#example">
+## Example<a name="example">
 
 The following example shows how a multi-level menu can be constructed in compact form.
 
