@@ -12,11 +12,26 @@ class MenuItem():
         if self.additional_questions is not None:
             questions = []
             for i, q in enumerate(self.additional_questions):
-                questions.append({
-                    'type': 'input',
-                    'name': i,
-                    'message': q
-                })
+                # Handle checkbox question
+                if type(q) is list:
+                    choices = []
+                    for choice in q:
+                        choices.append({'name': choice})
+
+                    questions.append({
+                        'type': 'checkbox',
+                        'message': 'Select option(s).',
+                        'name': i,
+                        'choices': choices
+                    })
+
+                # Handle input question
+                else:
+                    questions.append({
+                        'type': 'input',
+                        'name': i,
+                        'message': q
+                    })
 
             answers = prompt(questions)
             values = []
