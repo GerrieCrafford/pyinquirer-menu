@@ -69,6 +69,10 @@ class Menu():
         answers = prompt(questions)
 
         if answers['q'] == 'Back':
+            # Check if parent has back
+            if self.parent and not self.parent.has_back:
+                return self.parent.parent
+
             return self.parent
 
         # Match answer to child
@@ -84,7 +88,11 @@ class Menu():
             return child
         elif isinstance(child, MenuItem):
             child.handle_selection()
-            return self
+
+            if not self.has_back:
+                return self.parent
+            else:
+                return self
 
     @staticmethod
     def loop(root_menu):
@@ -145,6 +153,7 @@ if __name__ == '__main__':
              ]),
 
         Menu('IRL',
+             has_back=False,
              children=[
                  MenuItem('Do IRL',
                           lambda: print('Do IRL called')),
