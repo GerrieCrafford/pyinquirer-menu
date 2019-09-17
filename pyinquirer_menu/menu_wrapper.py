@@ -28,11 +28,16 @@ class MenuItem():
 
                 # Handle input type (the default type)
                 if 'type' not in q or q['type'] == 'input':
-                    questions.append({
+                    question = {
                         'type': 'input',
                         'name': i,
-                        'message': q['msg']
-                    })
+                        'message': q['msg'],
+                    }
+
+                    if 'default' in q:
+                        question['default'] = q['default']
+
+                    questions.append(question)
 
                 # Handle checkbox question
                 elif q['type'] == 'checkbox':
@@ -206,7 +211,8 @@ if __name__ == '__main__':
                                additional_questions=[
                                    {'msg': 'Enter file path.'}, # Note missing 'type' that defaults to 'input'
                                    {'msg': 'Enter a number.',
-                                    'conv': int}, # Converts to integer
+                                    'conv': int, # Converts to integer
+                                    'default': '15'},
                                    {'type': 'checkbox', # Note missing 'msg'
                                     'choices': ['choice1', 'choice2']},
                                    {'msg': 'Enter a value.',

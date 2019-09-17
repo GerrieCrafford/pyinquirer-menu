@@ -70,6 +70,7 @@ Static method that shows the root `Menu` and allows traversal of the `Menu`'s. T
 * `'name'` [string]: Name of the optional argument in the `handler` method.
 * `'choices'` [list]: List of strings that user can pick.
 * `'conv'` [callable]: Function to postprocess (convert) the user-supplied value.
+* `'default'` [string]: String that will be used as default value to question.
 
 `handler` is a callable that will be called when the `MenuItem` is selected. The results of additional questions are passed to the `handler` in the order that the questions appear in the list. Additional questions that are set to `'once'` will be passed to the `handler` through an optional parameter, with the name specified by the `'name'` key.
 
@@ -85,6 +86,7 @@ MenuItem('Test',
      additional_questions=[
 	 {'msg': 'Enter file path.'}, # Note missing 'type' that defaults to 'input'
 	 {'msg': 'Enter a number.',
+	  'defaut': '15',
 	  'conv': int}, # Converts to integer
 	 {'type': 'checkbox', # Note missing 'msg'
 	  'choices': ['choice1', 'choice2']},
@@ -133,6 +135,7 @@ root_menu.add_children([
 			       additional_questions=[
 				   {'msg': 'Enter file path.'},
 				   {'msg': 'Enter a number.',
+				    'default': '15',
 				    'conv': int},
 				   {'type': 'checkbox',
 				    'choices': ['choice1', 'choice2']},
