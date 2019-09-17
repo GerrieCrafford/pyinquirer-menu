@@ -167,13 +167,26 @@ class Menu():
                 return self
 
     @staticmethod
-    def loop(root_menu):
+    def loop(root_menu, exit_confirmation=True):
         menu = root_menu
         try:
             while True:
                 menu = menu.show()
                 if menu is None:
-                    break
+                    if not exit_confirmation:
+                        break
+
+                    # Exit confirmation
+                    questions = [{'type': 'confirm',
+                                  'message': 'Are you sure you want to quit?',
+                                  'name': 'quit',
+                                  'default': True}]
+                    answers = prompt(questions)
+                    if answers['quit']:
+                        break
+                    else:
+                        menu = root_menu
+
         except KeyboardInterrupt:
             pass
 
