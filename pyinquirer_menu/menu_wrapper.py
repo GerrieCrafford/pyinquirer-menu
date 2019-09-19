@@ -17,6 +17,7 @@ class MenuItem():
             asked_indices = []
             questions = []
             optional_questions = []
+            input_questions = {}
             for i, q in enumerate(self.additional_questions):
                 # Check if we should ask this question
                 optional_question = False
@@ -28,14 +29,16 @@ class MenuItem():
 
                 # Handle input type (the default type)
                 if 'type' not in q or q['type'] == 'input':
+                    msg = q['msg']
+                    default = q.get('default', None)
+                    if default:
+                        msg += ' (default: {})'.format(default)
+
                     question = {
                         'type': 'input',
                         'name': i,
-                        'message': q['msg'],
+                        'message': msg,
                     }
-
-                    if 'default' in q:
-                        question['default'] = q['default']
 
                     questions.append(question)
 
@@ -62,12 +65,18 @@ class MenuItem():
                 else:
                     asked_indices.append(i)
 
+                input_questions[i] = q
+
             answers = prompt(questions)
 
             # Required values
             values = []
             for i in asked_indices:
                 val = answers[i]
+
+                # Handle default
+                if val == '' and i in input_questions:
+                    val = input_questions[i].get('default', '')
 
                 # Convert value if conversion function provided
                 if 'conv' in self.additional_questions[i]:
@@ -79,6 +88,10 @@ class MenuItem():
             opt = {}
             for name, i in optional_questions:
                 val = answers[i]
+
+                # Handle default
+                if val == '' and i in input_questions:
+                    val = input_questions[i].get('default', '')
 
                 # Convert value if conversion function provided
                 if 'conv' in self.additional_questions[i]:
