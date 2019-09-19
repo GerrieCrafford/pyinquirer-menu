@@ -37,7 +37,9 @@ class MenuItem():
                     if default:
                         if callable(default):
                             default = default()
-                        msg += ' (default: {})'.format(default)
+
+                        if default != '':
+                            msg += ' (default: {})'.format(default)
 
                     question = {
                         'type': 'input',
