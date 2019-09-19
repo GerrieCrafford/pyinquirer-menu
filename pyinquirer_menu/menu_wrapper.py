@@ -1,5 +1,8 @@
 from PyInquirer import prompt
 
+class MenuInterruptedError(Exception):
+    pass
+
 class MenuItem():
     def __init__(self, text, handler, parent=None, additional_questions=None, menu_after=None):
         self.text = text
@@ -71,41 +74,45 @@ class MenuItem():
 
             answers = prompt(questions)
 
-            # Required values
-            values = []
-            for i in asked_indices:
-                val = answers[i]
+            # Check for Ctrl-C
+            try:
+                # Required values
+                values = []
+                for i in asked_indices:
+                    val = answers[i]
 
-                # Handle default
-                if val == '' and i in input_questions:
-                    val = input_questions[i].get('default', '')
-                    if callable(val):
-                        val = val()
+                    # Handle default
+                    if val == '' and i in input_questions:
+                        val = input_questions[i].get('default', '')
+                        if callable(val):
+                            val = val()
 
-                # Convert value if conversion function provided
-                if 'conv' in self.additional_questions[i]:
-                    val = self.additional_questions[i]['conv'](val)
+                    # Convert value if conversion function provided
+                    if 'conv' in self.additional_questions[i]:
+                        val = self.additional_questions[i]['conv'](val)
 
-                values.append(val)
+                    values.append(val)
 
-            # Optional values
-            opt = {}
-            for name, i in optional_questions:
-                val = answers[i]
+                # Optional values
+                opt = {}
+                for name, i in optional_questions:
+                    val = answers[i]
 
-                # Handle default
-                if val == '' and i in input_questions:
-                    val = input_questions[i].get('default', '')
-                    if callable(val):
-                        val = val()
+                    # Handle default
+                    if val == '' and i in input_questions:
+                        val = input_questions[i].get('default', '')
+                        if callable(val):
+                            val = val()
 
-                # Convert value if conversion function provided
-                if 'conv' in self.additional_questions[i]:
-                    val = self.additional_questions[i]['conv'](val)
+                    # Convert value if conversion function provided
+                    if 'conv' in self.additional_questions[i]:
+                        val = self.additional_questions[i]['conv'](val)
 
-                opt[name] = val
+                    opt[name] = val
 
-            self.handler(*values, **opt)
+                self.handler(*values, **opt)
+            except KeyError:
+                raise MenuInterruptedError
 
         else:
             self.handler()
@@ -157,7 +164,7 @@ class Menu():
         questions = self.get_questions()
         answers = prompt(questions)
 
-        if answers['q'] == 'Back':
+        if not answers or answers['q'] == 'Back':
             # Check if parent has back
             if self.parent and not self.parent.has_back:
                 return self.parent.parent
@@ -176,10 +183,16 @@ class Menu():
         if isinstance(child, Menu):
             return child
         elif isinstance(child, MenuItem):
-            child.handle_selection()
+            try:
+                child.handle_selection()
 
-            if child.menu_after:
-                return child.menu_after
+                # This is in the try block since we don't want to go to the
+                # menu after this one if this one was interrupted
+                if child.menu_after:
+                    return child.menu_after
+            except MenuInterruptedError:
+                pass
+
             if not self.has_back:
                 return self.parent
             else:
@@ -201,7 +214,7 @@ class Menu():
                                   'name': 'quit',
                                   'default': True}]
                     answers = prompt(questions)
-                    if answers['quit']:
+                    if not answers or answers['quit']:
                         break
                     else:
                         menu = root_menu
