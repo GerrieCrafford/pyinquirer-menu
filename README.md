@@ -70,7 +70,7 @@ Static method that shows the root `Menu` and allows traversal of the `Menu`'s. T
 * `'name'` [string]: Name of the optional argument in the `handler` method.
 * `'choices'` [list]: List of strings that user can pick.
 * `'conv'` [callable]: Function to postprocess (convert) the user-supplied value.
-* `'default'` [string]: String that will be used as default value to question.
+* `'default'` [string/callable]: String or callable that will be used as default value to question (the callable will be called with no arguments to obtain the default value).
 
 `handler` is a callable that will be called when the `MenuItem` is selected. The results of additional questions are passed to the `handler` in the order that the questions appear in the list. Additional questions that are set to `'once'` will be passed to the `handler` through an optional parameter, with the name specified by the `'name'` key.
 

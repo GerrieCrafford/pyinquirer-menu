@@ -32,6 +32,8 @@ class MenuItem():
                     msg = q['msg']
                     default = q.get('default', None)
                     if default:
+                        if callable(default):
+                            default = default()
                         msg += ' (default: {})'.format(default)
 
                     question = {
@@ -77,6 +79,8 @@ class MenuItem():
                 # Handle default
                 if val == '' and i in input_questions:
                     val = input_questions[i].get('default', '')
+                    if callable(val):
+                        val = val()
 
                 # Convert value if conversion function provided
                 if 'conv' in self.additional_questions[i]:
@@ -92,6 +96,8 @@ class MenuItem():
                 # Handle default
                 if val == '' and i in input_questions:
                     val = input_questions[i].get('default', '')
+                    if callable(val):
+                        val = val()
 
                 # Convert value if conversion function provided
                 if 'conv' in self.additional_questions[i]:
@@ -235,7 +241,8 @@ if __name__ == '__main__':
                       MenuItem('Additional questions test',
                                handler,
                                additional_questions=[
-                                   {'msg': 'Enter file path.'}, # Note missing 'type' that defaults to 'input'
+                                   {'msg': 'Enter file path.', # Note missing 'type' that defaults to 'input'
+                                    'default': lambda: 'some string'},
                                    {'msg': 'Enter a number.',
                                     'conv': int, # Converts to integer
                                     'default': '15'},
