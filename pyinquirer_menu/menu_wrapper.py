@@ -120,12 +120,13 @@ class MenuItem():
             self.handler()
 
 class Menu():
-    def __init__(self, text, children=None, parent=None, prompt_text='Choose option.', has_back=True):
+    def __init__(self, text, children=None, parent=None, prompt_text='Choose option.', has_back=True, on_show=None):
         self.children = None
         self.text = text
         self.has_back = has_back
         self.prompt_text = prompt_text
         self.parent = parent
+        self.on_show = on_show
 
         if children is not None:
             self.add_children(children)
@@ -163,6 +164,10 @@ class Menu():
         return questions
 
     def show(self):
+        # Call on_show if there is one
+        if self.on_show:
+            self.on_show(self)
+
         questions = self.get_questions()
         answers = prompt(questions)
 

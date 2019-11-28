@@ -25,13 +25,14 @@ The package has the following dependencies:
 
 ### Methods
 
-#### `__init__(self, text, children=None, parent=None, prompt_text=None, has_back=True)`
+#### `__init__(self, text, children=None, parent=None, prompt_text=None, has_back=True, on_show=None)`
 
 * **`text`** [string]: The text that is shown when this `Menu` is a child of another `Menu`.
 * **`children`** [list]: A list of children that will be added to the `Menu` (can contain other `Menu` objects as well as `MenuItem` objects). The constructor calls `add_children` internally.
 * **`parent`** [`Menu`]: The `Menu`'s parent.
 * **`prompt_text`** [string]: The text shown in the prompt for the `Menu`.
 * **`has_back`** [bool]: Determines whether a 'Back' option is added to the `Menu`.
+* **`on_show`**: [Callable]: Called (with a reference to the menu) just before the menu is shown. `on_show(menu)`.
 
 #### `add_children(self, children)`
 
