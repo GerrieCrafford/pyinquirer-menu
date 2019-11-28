@@ -9,4 +9,7 @@ setup(name='pyinquirer_menu',
       description='Package that allows easy multi-level menu creation using PyInquirer',
       long_description=long_description,
       long_description_content_type='text/markdown',
- )
+      install_requires=[
+          'PyInquirer==1.0.3',
+      ],
+     )
